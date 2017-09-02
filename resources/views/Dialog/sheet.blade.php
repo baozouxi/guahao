@@ -1,7 +1,10 @@
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this);set_title('全部');" url="stat_rep_dia.asp?to=m">对话报表</a></li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('对话统计', route('dialogStatistics')) !!}
+        {!! guideHtml('列表') !!}
     </ul>
 </div>
 <div id="wrap" class="wrap">

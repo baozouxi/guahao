@@ -7,7 +7,7 @@
         <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
                                           url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
         </li>
-        {!! guideHtml('患者列表', route('patient.index')) !!}
+        {!! guideHtml('患者管理', route('patient.index')) !!}
         {!! guideHtml('列表') !!}
     </ul>
     <p class="nlink right">

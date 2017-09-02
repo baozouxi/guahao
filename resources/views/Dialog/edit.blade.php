@@ -1,9 +1,11 @@
 <!--导航-->
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this,'main')" url="dia.asp?s=1">对话列表</a><span class="ider">&gt;</span></li>
-        <li>编辑回拨</li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('对话记录', route('dialog.index')) !!}
+        {!! guideHtml('编辑记录') !!}
     </ul>
 </div>
 <div id="wrap" class="wrap">

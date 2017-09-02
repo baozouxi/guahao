@@ -26,6 +26,8 @@ class PatientController extends Controller
     // 列表显示
     public function index(Request $req)
     {
+
+
         $data     = Patient::orderBy('add_time', 'desc')->paginate('20');
         $count    = Patient::count();
         $fieldUrl = route('fields.create', ['type' => '2']);
@@ -33,9 +35,16 @@ class PatientController extends Controller
             $fieldUrl = route('fields.edit', ['id' => $fields->id]);
         }
         list($data, $fields_list) = $this->reduceArr($data);
+        $nav_html = guideHtml($req->getPathInfo());
 
         return view('Patient.index',
-            ['data' => $data, 'count' => $count, 'fields_list' => $fields_list, 'fieldUrl' => $fieldUrl]);
+            [
+                'data'        => $data,
+                'count'       => $count,
+                'nav'         => $nav_html,
+                'fields_list' => $fields_list,
+                'fieldUrl'    => $fieldUrl
+            ]);
     }
 
 

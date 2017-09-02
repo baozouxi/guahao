@@ -39,6 +39,7 @@ class IndexController extends Controller
             }
         }
 
+
         if ($req->s == '1') {
             return view('indexWithoutHeader', ['nav' => $nav_reduce, 'setting_nav' => $nav_setting_arr]);
         }

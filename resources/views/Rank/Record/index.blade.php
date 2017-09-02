@@ -1,9 +1,11 @@
 <!--导航-->
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="main.asp?s=1">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this);set_title('列表');" url="rank.asp">竞价记录</a><span class="ider">&gt;</span></li>
-        <li><span id="guide">列表</span></li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('竞价记录', route('rank-record.index')) !!}
+        {!! guideHtml('列表') !!}
     </ul>
     <p class="nlink right"><a href="javascript:void(0);" onclick="fastH(this,'main')" url="{{ route('rank.index') }}"><span class="icon">š</span>分类管理</a></p>
 </div>
@@ -23,20 +25,20 @@
                     <button type="submit" class="search"><span class="icon">ĺ</span></button>
                 </form>
             </div>
-            <div id="fun-s" class="fun-s right block">
-                <select class="select" onchange="To('rank.asp?s=1&amp;to='+this.options[this.selectedIndex].value+'','main');">
-                    <option value="0">按月查询</option>
-                    <option value="2017-7">2017年7月</option>
-                </select>
-                <select class="select" onchange="To('rank.asp?s=1&amp;n='+this.options[this.selectedIndex].value+'','main');">
-                    <option value="0" selected="selected">全部来源</option>
-                    <option value="2">百度PC端</option>
-                    <option value="3">百度移动端</option>
-                    <option value="6">神马账户</option>
-                    <option value="7">搜狗账户</option>
-                    <option value="8">网盟</option>
-                </select>
-            </div>
+            {{--<div id="fun-s" class="fun-s right block">--}}
+                {{--<select class="select" onchange="To('rank.asp?s=1&amp;to='+this.options[this.selectedIndex].value+'','main');">--}}
+                    {{--<option value="0">按月查询</option>--}}
+                    {{--<option value="2017-7">2017年7月</option>--}}
+                {{--</select>--}}
+                {{--<select class="select" onchange="To('rank.asp?s=1&amp;n='+this.options[this.selectedIndex].value+'','main');">--}}
+                    {{--<option value="0" selected="selected">全部来源</option>--}}
+                    {{--<option value="2">百度PC端</option>--}}
+                    {{--<option value="3">百度移动端</option>--}}
+                    {{--<option value="6">神马账户</option>--}}
+                    {{--<option value="7">搜狗账户</option>--}}
+                    {{--<option value="8">网盟</option>--}}
+                {{--</select>--}}
+            {{--</div>--}}
         </div>
         <div id="box" class="box">
             <table cellspacing="1" cellpadding="0">

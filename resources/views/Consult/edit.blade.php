@@ -1,9 +1,11 @@
 <!--导航-->
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this,'main')" url="cons.asp?s=1">咨询列表</a><span class="ider">&gt;</span></li>
-        <li>编辑咨询</li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('患者咨询', route('consult.index')) !!}
+        {!! guideHtml('修改咨询记录') !!}
     </ul>
 </div>
 <div id="wrap" class="wrap">

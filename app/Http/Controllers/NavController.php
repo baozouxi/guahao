@@ -95,6 +95,5 @@ class NavController extends Controller
         }
 
         return code('修改失败', '-1');
-    }gi
-
+    }
 }

@@ -1,9 +1,11 @@
 <!--导航-->
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this,'main')" url="tel.asp?s=1">电话列表</a><span class="ider">&gt;</span></li>
-        <li>编辑电话</li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('电话咨询', route('tel-consult.index')) !!}
+        {!! guideHtml('修改记录') !!}
     </ul>
 </div>
 <div id="wrap" class="wrap">

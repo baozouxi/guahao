@@ -1,9 +1,11 @@
 <!--导航-->
 <div class="guide">
     <ul class="left">
-        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-        <li><a href="javascript:void(0);" onclick="fastH(this);set_title('列表');" url="dia.asp">对话记录</a><span class="ider">&gt;</span></li>
-        <li><span id="guide">列表</span></li>
+        <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                          url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+        </li>
+        {!! guideHtml('对话管理', route('dialog.index')) !!}
+        {!! guideHtml('列表') !!}
     </ul>
     <p class="nlink right"><a href="javascript:void(0);" onclick="fastL('dia.asp?act=up&amp;key=500');" class="sms"><span class="icon">ħ</span>纠正全部</a><a href="javascript:void(0);" onclick="fastL('dia.asp?act=up');" class="sms"><span class="icon">ē</span>纠正数据</a></p>
 </div>
@@ -25,17 +27,17 @@
                     <button type="submit" class="search"><span class="icon">ĺ</span></button>
                 </form>
             </div>
-            <div id="fun-s" class="fun-s right block">
-                <select class="select" onchange="To('dia.asp?s=1&amp;to='+this.options[this.selectedIndex].value+'','main');">
-                    <option value="0">按月查询</option>
-                    <option value="2017-6">2017年6月</option>
-                </select>
-                <select class="select" onchange="To('dia.asp?s=1&amp;n='+this.options[this.selectedIndex].value+'','main');">
-                    <option value="0" selected="selected">所有用户</option>
-                    <option value="1">医患通</option>
-                    <option value="2">咨询</option>
-                </select>
-            </div>
+            {{--<div id="fun-s" class="fun-s right block">--}}
+                {{--<select class="select" onchange="To('dia.asp?s=1&amp;to='+this.options[this.selectedIndex].value+'','main');">--}}
+                    {{--<option value="0">按月查询</option>--}}
+                    {{--<option value="2017-6">2017年6月</option>--}}
+                {{--</select>--}}
+                {{--<select class="select" onchange="To('dia.asp?s=1&amp;n='+this.options[this.selectedIndex].value+'','main');">--}}
+                    {{--<option value="0" selected="selected">所有用户</option>--}}
+                    {{--<option value="1">医患通</option>--}}
+                    {{--<option value="2">咨询</option>--}}
+                {{--</select>--}}
+            {{--</div>--}}
         </div>
         <div id="box" class="box">
             <table cellspacing="1" cellpadding="0">

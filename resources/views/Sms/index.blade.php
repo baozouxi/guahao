@@ -2,9 +2,11 @@
     <!--导航-->
     <div class="guide">
         <ul class="left">
-            <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')" url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span></li>
-            <li><a href="javascript:void(0);" onclick="fastH(this);set_title('列表');" url="sms.asp">短信记录</a><span class="ider">&gt;</span></li>
-            <li><span id="guide">列表</span></li>
+            <li><span class="icon">Ă</span><a href="javascript:void(0);" onclick="getChange(0);fastH(this,'main')"
+                                              url="{{ route('index',['s'=>'1']) }}">首页</a><span class="ider">&gt;</span>
+            </li>
+            {!! guideHtml('短信记录', route('sms.index')) !!}
+            {!! guideHtml('列表') !!}
         </ul>
         @if(check_node('sms_add'))
         <p class="nlink right"><a href="javascript:void(0);" title="新增短信" onclick="msgbox(this,600);" url="{{ route('sms.create') }}" class="sms"><span class="icon">ė</span>新增短信</a></p>

@@ -8,8 +8,6 @@ use App\Models\Appointment;
 //作为调用api使用 进行各种数据的验证， 辅助数据的返回
 class CallBackController extends Controller
 {
-
-
     //验证数据
     public function check(Request $req, $model, $action, $args)
     {

@@ -9,6 +9,17 @@ function getNow()
 	return date('Y-m-d H:i:s');
 }
 
+
+function getIcon()
+{
+    $qq  = '';
+    $qq  = \App\Models\User::find(session('user_id'))->qq;
+    $api = 'http://q2.qlogo.cn/headimg_dl?bs=%s&dst_uin=%s&src_uin=%s&fid=%s&spec=100&url_enc=0&referer=bu_interface&term_type=PC';
+
+    return sprintf($api, $qq, $qq, $qq, $qq);
+}
+
+
 /**
  * 替换地方
  * @param  [type] $area    [description]

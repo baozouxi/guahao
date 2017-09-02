@@ -53,7 +53,7 @@
                 <button type="reset" class="button"><span class="icon">ň</span>重置</button>
                 <button type="button" onclick="To($('back_url').value,'main');" class="button"><span class="icon">ĭ</span>返回</button>
             </form>
-            <input type="hidden" name="this_url" id="this_url" value="/user.asp?act=pass">
+            <input type="hidden" name="back_url" id="back_url" value="{{ route('index',['s'=>'1']) }}">
         </div>
     </div>
 </div>
