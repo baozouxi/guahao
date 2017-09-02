@@ -27,9 +27,6 @@ class LoginController extends Controller
             return $error;
         }
 
-        $role = Role::findOrFail($user->role_id);
-
-        $acc_nodes = unserialize($role['nodes']);
 
         $req->session()->put('user_id', $user->id);
 
@@ -37,7 +34,6 @@ class LoginController extends Controller
 
         $req->session()->put('name', $user->name);
 
-        $req->session()->put('access_nodes', $acc_nodes);
 
         return ['code' => '0', 'msg' => route('index'), 'time' => getNow()];
     }
