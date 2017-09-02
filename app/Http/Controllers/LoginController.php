@@ -27,7 +27,7 @@ class LoginController extends Controller
             return $error;
         }
 
-        $role = Role::find($user->role_id)->toArray();
+        $role = Role::findOrFail($user->role_id);
 
         $acc_nodes = unserialize($role['nodes']);
 

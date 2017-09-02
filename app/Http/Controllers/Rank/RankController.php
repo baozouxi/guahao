@@ -11,7 +11,8 @@ class RankController extends Controller
     public function index()
     {
         $ranks = Rank::all();
-        return view('Rank.index', ['ranks'=>$ranks]);
+
+        return view('Rank.index', ['ranks' => $ranks]);
     }
 
     public function create()
@@ -23,16 +24,17 @@ class RankController extends Controller
     {
         $this->validate($req, [
             'name' => 'required|string|min:5'
-            ]);
+        ]);
 
-        $rank = new Rank();
-        $rank->name = $req->name;
+        $rank           = new Rank();
+        $rank->name     = $req->name;
         $rank->admin_id = '1';
-        if ($rank->save()) return code('添加成功', '-4');
+        if ($rank->save()) {
+            return code('添加成功', '-4');
+        }
 
         return code('添加失败，请刷新重试', '1');
     }
 
-    
 
 }

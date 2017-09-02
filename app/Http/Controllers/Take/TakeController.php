@@ -12,85 +12,109 @@ use DB;
 
 class TakeController extends Controller
 {
-    
+
     public function index()
-	{
-        $takes = Take::leftJoin('patients', 'takes.patient_id', '=', 'patients.id')->orderBy('add_time','desc')->get(['patients.name','takes.*', 'patients.id as patientId']);
-        $users  = getAuxiliary()['users'];
+    {
+        $takes = Take::leftJoin('patients', 'takes.patient_id', '=', 'patients.id')->orderBy('add_time',
+            'desc')->get(['patients.name', 'takes.*', 'patients.id as patientId']);
+        $users = getAuxiliary()['users'];
         foreach ($takes as $take) {
-            $take->admin_id =  isset($users[$take->admin_id]) ? $users[$take->admin_id] : '----' ;
+            $take->admin_id = isset($users[$take->admin_id]) ? $users[$take->admin_id] : '----';
         }
+
         return view('take.index', ['takes' => $takes]);
     }
 
     public function today()
     {
         $start = date('Y-m-d 00:00:00', time());
-        $end = date('Y-m-d 23:59:59', time());
+        $end   = date('Y-m-d 23:59:59', time());
 
         $takes = Take::leftJoin('patients', 'takes.patient_id', '=', 'patients.id')
-                        ->whereBetween('takes.add_time', [$start, $end])
-                        ->orderBy('add_time','desc')
-                        ->get(['patients.name','takes.*', 'patients.id as patientId']);
+                     ->whereBetween('takes.add_time', [$start, $end])
+                     ->orderBy('add_time', 'desc')
+                     ->get(['patients.name', 'takes.*', 'patients.id as patientId']);
+
         return view('take.index', ['takes' => $takes]);
     }
 
 
     public function infoWithPatient(Patient $patientId)
     {
-    	$takes = Take::where('patient_id', $patientId->id)->get();
-    	$area = CallbackController::area($patientId->province-1, $patientId->city-1, $patientId->town-1);
-    	foreach ($area as $field => $item) {
-    		$patientId->$field = $item;
-    	}
-		return view('take.infoWithPatient',['patient'=>$patientId, 'takes'=>$takes]);
+        $takes = Take::where('patient_id', $patientId->id)->get();
+        $area  = CallbackController::area($patientId->province - 1, $patientId->city - 1, $patientId->town - 1);
+        foreach ($area as $field => $item) {
+            $patientId->$field = $item;
+        }
+
+        return view('take.infoWithPatient', ['patient' => $patientId, 'takes' => $takes]);
     }
 
     public function create(Request $req)
     {
-       	if((!isset($req->patientId)) || (!$patient = Patient::find((int)$req->patientId))) return ['code'=>'1', 'msg'=>'该患者不存在，请刷新后重试', 'time'=>getNow()];
-        $area = CallbackController::area($patient->province-1, $patient->city-1, $patient->town-1);
+        if (( ! isset($req->patientId)) || ( ! $patient = Patient::find((int)$req->patientId))) {
+            return ['code' => '1', 'msg' => '该患者不存在，请刷新后重试', 'time' => getNow()];
+        }
+        $area = CallbackController::area($patient->province - 1, $patient->city - 1, $patient->town - 1);
         foreach ($area as $field => $val) {
             $patient->$field = $val;
         }
-        $req->session()->put('patientId',(int)$req->patientId);
-        return view('take.create', ['data'=>$patient]);
+        $req->session()->put('patientId', (int)$req->patientId);
+
+        return view('take.create', ['data' => $patient]);
 
     }
 
     public function store(TakeRequest $req)
     {
-        if(!$patient_id =  $req->session()->pull('patientId')) return;
-        $data = $req->all();
+        if ( ! $patient_id = $req->session()->pull('patientId')) {
+            return;
+        }
+        $data               = $req->all();
         $data['patient_id'] = $patient_id;
-        $data['admin_id'] = '1';
-        if(!$res = Take::create($data) ) return ['code'=>'1', 'msg'=>'消费创建失败，请刷新后重试', 'time'=>getNow()];
+        $data['admin_id']   = '1';
+        if ( ! $res = Take::create($data)) {
+            return ['code' => '1', 'msg' => '消费创建失败，请刷新后重试', 'time' => getNow()];
+        }
 
-        return ['code'=>'0', 'msg'=>route('takeWithInfo', ['patientId'=>$patient_id]), 'time'=>getNow()];    
+        return ['code' => '0', 'msg' => route('takeWithInfo', ['patientId' => $patient_id]), 'time' => getNow()];
 
     }
- 	
+
 
     public function show($patientId)
     {
-        if(!$patient = Patient::find((int)$patientId));
-        $takes = Take::where('patient_id',$patientId)->orderBy('add_time', 'desc')->get();
-        return view('take.show', ['data'=>$patient, 'takes'=>$takes]);
+        if ( ! $patient = Patient::find((int)$patientId)) {
+            ;
+        }
+        $takes = Take::where('patient_id', $patientId)->orderBy('add_time', 'desc')->get();
+
+        return view('take.show', ['data' => $patient, 'takes' => $takes]);
     }
 
     public function edit($takeId)
     {
-        if(!$take = Take::find($takeId)) return ['code'=>'1', 'msg'=>'该消费不存在，请刷新后重试', 'time'=>getNow()];
-        if(!$patient = Patient::find($take->patient_id)) return ['code'=>'1', 'msg'=>'病人不存在，请刷新后重试', 'time'=>getNow()];
-        return view('take.edit', ['data'=>$patient, 'take'=>$take]);
+        if ( ! $take = Take::find($takeId)) {
+            return ['code' => '1', 'msg' => '该消费不存在，请刷新后重试', 'time' => getNow()];
+        }
+        if ( ! $patient = Patient::find($take->patient_id)) {
+            return ['code' => '1', 'msg' => '病人不存在，请刷新后重试', 'time' => getNow()];
+        }
+
+        return view('take.edit', ['data' => $patient, 'take' => $take]);
     }
 
     public function update(TakeRequest $req, $id)
     {
-        if(!$take = Take::find((int)$id)) return ['code'=>'1','msg'=>'该消费不存在，请刷新后重试', 'time'=>getNow()];
+        if ( ! $take = Take::find((int)$id)) {
+            return ['code' => '1', 'msg' => '该消费不存在，请刷新后重试', 'time' => getNow()];
+        }
         $data = $req->all();
-        if(!$take->update($data)) return ['code'=>'1', 'msg'=>'消费修改失败，请重试', 'time'=>$getNow()];
-        return ['code'=>'0', 'msg'=>route('takeWithInfo',['patientId'=>$take->patient_id]), 'time'=>getNow()];   
+        if ( ! $take->update($data)) {
+            return ['code' => '1', 'msg' => '消费修改失败，请重试', 'time' => $getNow()];
+        }
+
+        return ['code' => '0', 'msg' => route('takeWithInfo', ['patientId' => $take->patient_id]), 'time' => getNow()];
     }
 
 
@@ -186,41 +210,49 @@ class TakeController extends Controller
                                             'data' => $data]);
     }
     */
-   
+
 
     public function statistics(Request $req)
     {
 
         $patients = Patient::all()->toArray();
-        $takes = Take::all()->toArray();
-        $months = Take::all(DB::raw('distinct DATE_FORMAT(add_time, "%Y-%m") as add_time'));
-        $key = 'admin_id';
-        if($req->has('key')) $key = $req->key;
+        $takes    = Take::all()->toArray();
+        $months   = Take::all(DB::raw('distinct DATE_FORMAT(add_time, "%Y-%m") as add_time'));
+        $key      = 'admin_id';
+        if ($req->has('key')) {
+            $key = $req->key;
+        }
 
         list($total, $data_arr) = $this->reduceArr($patients, $takes, $key);
 
-        if($req->has('key')) return view('Take.statistics.listWithoutNav', ['total'=>$total, 'data'=>$data_arr]);
-       return view('Take.statistics.index', ['total'=>$total, 'data'=>$data_arr, 'months'=>$months]);
+        if ($req->has('key')) {
+            return view('Take.statistics.listWithoutNav', ['total' => $total, 'data' => $data_arr]);
+        }
+
+        return view('Take.statistics.index', ['total' => $total, 'data' => $data_arr, 'months' => $months]);
     }
 
 
     private function reduceArr($patients, $takes, $key)
     {
 
-                //数据总计
-        $total['take_sum'] = 0; //总消费
-        $total['all_reHospital_count'] = 0; // 总复诊人数
-        $total['reHospital_take_sum'] = 0; //复诊总消费
-        $total['all_patient_count'] = count($patients); //到诊人数
+        //数据总计
+        $total['take_sum']               = 0; //总消费
+        $total['all_reHospital_count']   = 0; // 总复诊人数
+        $total['reHospital_take_sum']    = 0; //复诊总消费
+        $total['all_patient_count']      = count($patients); //到诊人数
         $total['all_patient_cost_count'] = 0; //总就诊人数
-        $takes = reduceArr($takes, 'patient_id'); //以病人ID为键重组数组
+        $takes                           = reduceArr($takes, 'patient_id'); //以病人ID为键重组数组
 
 
         $total['all_patient_cost_count'] = count($takes);
 
         //该数组保存复诊的patient_id
-        $reHospital_id_arr = array_filter(array_map('count', $takes), function($data){
-            if($data > 1) return true;
+        $reHospital_id_arr = array_filter(array_map('count', $takes), function ($data) {
+            if ($data > 1) {
+                return true;
+            }
+
             return false;
         });
         $reHospital_id_arr = array_keys($reHospital_id_arr);
@@ -228,39 +260,38 @@ class TakeController extends Controller
         $total['all_reHospital_count'] = count($reHospital_id_arr);
 
         $take_data = [];  //用于存放统计数据
-  
+
         //对病人数据的id替换成对应的值
-     
+
         list($diseases, $doctors, $users, $ways, $ads) = array_values(getAuxiliary());
 
-  
+
         foreach ($patients as &$patient) {
             if (in_array($patient['id'], array_keys($takes))) {
                 $patient['add_time'] = $takes[$patient['id']]['0']['add_time']; //因为统计数据以消费记录为准 故将添加时间替换为消费时间
             }
-         
-            $patient['gender'] =  $patient['gender'] == '1' ? '男' : '女' ;
 
-            list($patient['province'],$patient['city'],$patient['town']) = array_values(CallbackController::area(
-                $patient['province']-1,$patient['city']-1,$patient['town']-1));
-            $patient['dep'] = isset($doctors[$patient['dep']]) ? $doctors[$patient['dep']] : '未知' ;
+            $patient['gender'] = $patient['gender'] == '1' ? '男' : '女';
 
-            $patient['admin_id'] = isset($users[$patient['admin_id']]) ? $users[$patient['admin_id']]  : '未知' ; 
-            $patient['dis'] = isset($diseases[$patient['dis']]) ? $diseases[$patient['dis']]  : '未知' ; 
+            list($patient['province'], $patient['city'], $patient['town']) = array_values(CallbackController::area(
+                $patient['province'] - 1, $patient['city'] - 1, $patient['town'] - 1));
+            $patient['dep'] = isset($doctors[$patient['dep']]) ? $doctors[$patient['dep']] : '未知';
+
+            $patient['admin_id'] = isset($users[$patient['admin_id']]) ? $users[$patient['admin_id']] : '未知';
+            $patient['dis']      = isset($diseases[$patient['dis']]) ? $diseases[$patient['dis']] : '未知';
             if ($patient['book_id'] != '0') {
-                $patient['ads'] = isset($ways[$patient['ads']]) ?$ways[$patient['ads']] : '未知';
-            }  else {
-                $patient['ads'] = isset($ads[$patient['ads']]) ?$ads[$patient['ads']] : '未知';
-            } 
+                $patient['ads'] = isset($ways[$patient['ads']]) ? $ways[$patient['ads']] : '未知';
+            } else {
+                $patient['ads'] = isset($ads[$patient['ads']]) ? $ads[$patient['ads']] : '未知';
+            }
         }
-        
 
 
         // 复诊的定义为除开第一次消费  其余的都为复诊   所以可以去掉最早的一条消费 进行sum
         foreach ($takes as $patient_id => $take) {
             foreach ($take as $item) {
-                $item_sum = $item['check_cost']+$item['treatment_cost']+$item['drug_cost']+$item['hospitalization_cost'];
-                $total['take_sum'] += $item_sum;
+                $item_sum                                  = $item['check_cost'] + $item['treatment_cost'] + $item['drug_cost'] + $item['hospitalization_cost'];
+                $total['take_sum']                         += $item_sum;
                 $take_data[$patient_id][$item['add_time']] = $item_sum;
             }
 
@@ -272,54 +303,73 @@ class TakeController extends Controller
         $patients = reduceArr($patients, $key);
 
 
-
         foreach ($patients as $field => $v) {
-            if(!isset($data_arr[$field]['take_sum'])) $data_arr[$field]['take_sum'] = 0; //总消费
-            if(!isset($data_arr[$field]['patient_cost_count'])) $data_arr[$field]['patient_cost_count'] = 0; //就诊人数
-            if(!isset($data_arr[$field]['patient_count'])) $data_arr[$field]['patient_count'] = 0;  //到诊人数
-            if(!isset($data_arr[$field]['reHospital_count'])) $data_arr[$field]['reHospital_count'] = 0; //复诊人数
-            if(!isset($data_arr[$field]['reHospital_take_sum'])) $data_arr[$field]['reHospital_take_sum'] = 0; //复诊消费
+            if ( ! isset($data_arr[$field]['take_sum'])) {
+                $data_arr[$field]['take_sum'] = 0;
+            } //总消费
+            if ( ! isset($data_arr[$field]['patient_cost_count'])) {
+                $data_arr[$field]['patient_cost_count'] = 0;
+            } //就诊人数
+            if ( ! isset($data_arr[$field]['patient_count'])) {
+                $data_arr[$field]['patient_count'] = 0;
+            }  //到诊人数
+            if ( ! isset($data_arr[$field]['reHospital_count'])) {
+                $data_arr[$field]['reHospital_count'] = 0;
+            } //复诊人数
+            if ( ! isset($data_arr[$field]['reHospital_take_sum'])) {
+                $data_arr[$field]['reHospital_take_sum'] = 0;
+            } //复诊消费
             foreach ($v as $item) {
 
-                if(in_array($item['id'], array_keys($takes))) $data_arr[$field]['patient_cost_count'] += 1;
+                if (in_array($item['id'], array_keys($takes))) {
+                    $data_arr[$field]['patient_cost_count'] += 1;
+                }
 
                 $data_arr[$field]['patient_count'] += 1;
-                if(isset($take_data[$item['id']])){
-                    $data_arr[$field]['take_sum'] += array_sum($take_data[$item['id']]); 
+                if (isset($take_data[$item['id']])) {
+                    $data_arr[$field]['take_sum'] += array_sum($take_data[$item['id']]);
                 }
                 // 统计复诊消费
-                if(in_array($item['id'], $reHospital_id_arr)) {
-                    $data_arr[$field]['reHospital_count']  += 1;
-                    $min = min(array_keys($take_data[$item['id']]));
+                if (in_array($item['id'], $reHospital_id_arr)) {
+                    $data_arr[$field]['reHospital_count'] += 1;
+                    $min                                  = min(array_keys($take_data[$item['id']]));
                     unset($take_data[$item['id']][$min]);
                     $data_arr[$field]['reHospital_take_sum'] += array_sum($take_data[$item['id']]);
-                    $total['reHospital_take_sum'] += array_sum($take_data[$item['id']]);
+                    $total['reHospital_take_sum']            += array_sum($take_data[$item['id']]);
                 }
-               
+
             }
         }
 
         //排序
         ksort($data_arr);
+
         return [$total, $data_arr];
     }
 
 
-
     public function staSearchByMonth(Request $req)
     {
-        $key = 'admin_id';
-        $month = date('Y-m', time());     
-        $months = Take::all(DB::raw('distinct DATE_FORMAT(add_time, "%Y-%m") as add_time'));   
-        if($req->has('key')) $key = $req->key;
-        if(strtotime($req->month)) $month = $req->month;
-        $monthStart = date('Y-m-01', strtotime($month));
-        $monthEnd = date('Y-m-d', strtotime("last day of $monthStart"));
-        $takes = Take::whereBetween('add_time', [$monthStart, $monthEnd])->get()->toArray();
+        $key    = 'admin_id';
+        $month  = date('Y-m', time());
+        $months = Take::all(DB::raw('distinct DATE_FORMAT(add_time, "%Y-%m") as add_time'));
+        if ($req->has('key')) {
+            $key = $req->key;
+        }
+        if (strtotime($req->month)) {
+            $month = $req->month;
+        }
+        $monthStart     = date('Y-m-01', strtotime($month));
+        $monthEnd       = date('Y-m-d', strtotime("last day of $monthStart"));
+        $takes          = Take::whereBetween('add_time', [$monthStart, $monthEnd])->get()->toArray();
         $patient_id_arr = array_column($takes, 'patient_id');
-        $patients = Patient::whereIn('id', $patient_id_arr)->get()->toArray();
+        $patients       = Patient::whereIn('id', $patient_id_arr)->get()->toArray();
         list($total, $data_arr) = $this->reduceArr($patients, $takes, $key);
-        if($req->has('month') && !$req->has('key')) return view('Take.statistics.listSearch', ['total'=>$total, 'data'=>$data_arr, 'months'=>$months, 'current_month'=>$month]);
-        return view('Take.statistics.listWithoutNav', ['total'=>$total, 'data'=>$data_arr]);
+        if ($req->has('month') && ! $req->has('key')) {
+            return view('Take.statistics.listSearch',
+                ['total' => $total, 'data' => $data_arr, 'months' => $months, 'current_month' => $month]);
+        }
+
+        return view('Take.statistics.listWithoutNav', ['total' => $total, 'data' => $data_arr]);
     }
 }

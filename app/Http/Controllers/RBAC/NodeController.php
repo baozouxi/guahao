@@ -15,52 +15,57 @@ class NodeController extends Controller
     public function index()
     {
         $group = NodeGroup::all()->toArray();
-        $node = Node::all()->toArray();
+        $node  = Node::all()->toArray();
 
         //以ID为键重组数组
-        $group = array_column($group, 'name', 'id');
+        $group       = array_column($group, 'name', 'id');
         $data_reduce = [];
 
         foreach ($node as $nodeItem) {
             if (isset($group[$nodeItem['group_id']])) {
-                $data_reduce[$group[$nodeItem['group_id']]]['id'] = $nodeItem['group_id'];
-                $data_reduce[$group[$nodeItem['group_id']]]['child'][] = $nodeItem; 
+                $data_reduce[$group[$nodeItem['group_id']]]['id']      = $nodeItem['group_id'];
+                $data_reduce[$group[$nodeItem['group_id']]]['child'][] = $nodeItem;
                 continue;
             }
-            $data_reduce['未分组']['child'][] = $nodeItem; 
+            $data_reduce['未分组']['child'][] = $nodeItem;
         }
 
         foreach ($group as $id => $name) {
-            if (!isset($data_reduce[$name])) {
-                $data_reduce[$name]['id'] = $id;
+            if ( ! isset($data_reduce[$name])) {
+                $data_reduce[$name]['id']    = $id;
                 $data_reduce[$name]['child'] = [];
             }
         }
 
-        if(isset($data_reduce['未分组']))  $data_reduce['未分组']['id'] = '0';
-    	return view('Rbac.Node.index', ['data'=>$data_reduce]);
+        if (isset($data_reduce['未分组'])) {
+            $data_reduce['未分组']['id'] = '0';
+        }
+
+        return view('Rbac.Node.index', ['data' => $data_reduce]);
     }
 
     public function create()
     {
         $group = NodeGroup::all();
-    	return view('Rbac.Node.create', ['group' => $group]);
+
+        return view('Rbac.Node.create', ['group' => $group]);
     }
 
     public function store(Request $req)
     {
-    	$this->validate($req, [
-            'name' => ['required','regex:/[a-zA-Z\d\-_]+/'],
-            'nickname' =>['required','regex:/^[\x7f-\xff]+$/'],
-            'group_id' => 'integer|required|min:0']);
-        $data = $req->all();
+        $this->validate($req, [
+            'name'     => ['required', 'regex:/[a-zA-Z\d\-_]+/'],
+            'nickname' => ['required', 'regex:/^[\x7f-\xff]+$/'],
+            'group_id' => 'integer|required|min:0'
+        ]);
+        $data             = $req->all();
         $data['admin_id'] = '1';
         if (Node::create($data)) {
             return code(route('node.index'), '-4');
         }
+
         return code('添加失败,请重试', '1');
     }
-
 
 
 }
